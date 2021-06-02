@@ -1,0 +1,142 @@
+<section class="src-componentes-formulario mt-3">
+  <div class="container-fluid">
+    <h2>Gastos</h2>
+    <hr />
+
+    <vue-form :state="formState" @submit.prevent="enviar()">
+      <validate tag="div">
+        <label for="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          class="form-control"
+          autocomplete="off"
+          v-model.trim="formData.nombre"
+          required
+          :minlength="nombreLengthMin"
+          :maxlength="nombreLengthMax"
+        />
+
+        <field-messages name="nombre" show="$dirty">
+          <div slot="required" class="alert alert-danger mt-1">
+            Campo requerido
+          </div>
+          <div slot="minlength" class="alert alert-danger mt-1">
+            Se deben ingresar como mínimo {{nombreLengthMin}} caracteres
+          </div>
+          <div
+            v-if="formData.nombre.length == nombreLengthMax"
+            class="alert alert-danger mt-1"
+          >
+            Máximo de caracteres ({{nombreLengthMax}}) alcanzados
+          </div>
+        </field-messages>
+      </validate>
+      <br />
+
+      <validate tag="div">
+        <label for="desc">Descripción</label>
+        <input
+          type="text"
+          id="desc"
+          class="form-control"
+          name="desc"
+          autocomplete="off"
+          v-model="formData.desc"
+          required
+        />
+
+        <field-messages name="desc" show="$dirty">
+          <div slot="required" class="alert alert-danger mt-1">
+            Campo requerido
+          </div>
+        </field-messages>
+      </validate>
+      <br />
+
+      <validate tag="div">
+        <label for="gasto">Monto gasto</label>
+        <input
+          type="number"
+          id="gasto"
+          class="form-control"
+          name="gasto"
+          autocomplete="off"
+          v-model.number="formData.gasto"
+          required
+          :min="numMin"
+        />
+
+        <field-messages name="gasto" show="$dirty">
+          <div slot="required" class="alert alert-danger mt-1">
+            Campo requerido
+          </div>
+          <div slot="min" class="alert alert-danger mt-1">
+            El monto ingresado no puede ser menor a {{numMin}}
+          </div>
+        </field-messages>
+      </validate>
+
+      <br />
+      <button
+        class="btn btn-success my-3"
+        :disabled="formState.$invalid"
+        type="submit"
+      >
+        Enviar
+      </button>
+    </vue-form>
+
+    <hr />
+
+    <h2>Historial de gastos</h2>
+    <div v-if="!!gastos.length">
+      <div class="row g-3 align-items-center">
+        <div class="col-auto">
+          <label for="presupuesto" class="col-form-label">Presupuesto:</label>
+        </div>
+        <div class="col-auto">
+          <input
+            type="number"
+            id="presupuesto"
+            name="presupuesto"
+            class="form-control"
+            autocomplete="off"
+            v-model.number="presupuesto"
+            required
+            :minlength="presupuestoLengthMin"
+            :maxlength="presupuestoLengthMax"
+          />
+        </div>
+      </div>
+
+      <table class="table table-striped table-bordered mt-3">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Monto gasto</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(gasto, i) in gastos" :key="i">
+            <td>{{gasto.nombre}}</td>
+            <td>{{gasto.desc}}</td>
+            <td>${{gasto.gasto}}</td>
+            <td>{{gasto.fecha}}</td>
+          </tr>
+          <tr>
+            <td colspan="4" class="table-light">
+              <span :class="getColorTotal"><b>TOTAL: ${{totalGastos}}</b></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div v-else class="alert alert-secondary mt-3">
+      Todavía no se han registardo gastos
+    </div>
+  </div>
+</section>
